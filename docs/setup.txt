@@ -1,0 +1,39 @@
+============= SETUP ===============
+
+1. Install Visual Studio Code
+2. Install Visual Studio (Community Version)
+    - Install ASP.NET and web development
+    - Azure development
+2. Install SQL Server 2022 (Express Version)
+    - Basic
+        - Install SSMS
+
+============= CREATE DOTNET PROJECT FOLDER ===============
+
+ > Type in the terminal:
+    dotnet new webapi -o api
+ > Go inside the 'api' folder you just created
+    cd api
+
+============== RUNNING THE DOTNET API Code ============
+> Type in the terminal:
+    dotnet watch run
+
+> Refreshing / Reloading the terminal after running the program:
+    ctrl + r
+
+================ ABOUT THE Program.cs =================
+    - In ASP.NET Core 8 (and earlier versions), Program.cs serves as the entry point and configuration hub of your web application. 
+      It's where you set up and configure all the essential components of your ASP.NET Core application.
+    
+    - More about the Program.cs in the docs/aboutProgramDotCs.txt
+
+================ NECESSARY EXTENSIONS =================
+
+1. C#
+2. C# Dev Kit
+3. NET Install Tool
+4. Nuget Gallery
+5. Prettier
+6. .NET Extension Pack
+7. C# Extensions JosKreativ

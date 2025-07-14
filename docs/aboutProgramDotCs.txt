@@ -1,0 +1,46 @@
+In ASP.NET Core 8 (and earlier versions), Program.cs serves as the entry point and configuration hub of your web application. It's where you set up and configure all the essential components of your ASP.NET Core application.
+
+
+Program.cs Basic Configuration With Comments for Explanation:
+
+    // Initialize a new web application builder with preconfigured defaults
+    // The 'args' parameter allows command-line arguments to be passed in
+    var builder = WebApplication.CreateBuilder(args);
+
+    // ================= SERVICE CONFIGURATION =================
+    // Add services to the dependency injection container
+
+    // Add services required for API endpoint metadata generation
+    // This is needed for Swagger/OpenAPI documentation
+    builder.Services.AddEndpointsApiExplorer();
+
+    // Configure Swagger document generation for API documentation
+    // This creates the OpenAPI specification and UI for testing endpoints
+    builder.Services.AddSwaggerGen();
+
+    // ================= APPLICATION BUILD =================
+    // Build the application after all services are registered
+    var app = builder.Build();
+
+    // ================= MIDDLEWARE PIPELINE =================
+    // Configure how HTTP requests are processed
+
+    // Development-specific middleware
+    if (app.Environment.IsDevelopment())
+    {
+        // Enable serving the generated OpenAPI/Swagger JSON document
+        app.UseSwagger();
+        
+        // Enable the Swagger UI interactive documentation
+        // Accessible at /swagger endpoint
+        app.UseSwaggerUI();
+    }
+
+    // Middleware to redirect HTTP requests to HTTPS
+    // Important for production security
+    app.UseHttpsRedirection();
+
+    // ================= APPLICATION START =================
+    // Start listening for incoming HTTP requests
+    // This is a blocking call that keeps the application running
+    app.Run();
