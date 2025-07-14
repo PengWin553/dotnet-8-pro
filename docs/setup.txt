@@ -37,3 +37,12 @@
 5. Prettier
 6. .NET Extension Pack
 7. C# Extensions JosKreativ
+
+=================== INSTALL ENTITY FRAMEWORK ===========
+1. press ctrl + shift + p
+2. Type the following to go to the Nuget Gallery:
+    > nuget
+3. Install: 
+    1. Microsoft.EntityFramworkCore.SqlServer (Version 8.0 / It depends on you. The version should match with your configuration in the asp.csproj)
+    2. Microsoft.EntityFrameworkCore.Tools (Version 8.0 / It depends on you. The version should match with your configuration in the asp.csproj)
+    3. Microsoft.EntityFrameworkCore.Design (Version 8.0 / It depends on you. The version should match with your configuration in the asp.csproj)
