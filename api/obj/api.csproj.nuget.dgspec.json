@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "c:\\Users\\SECCA\\Documents\\2025 Systems\\dotnet-8-pro\\api\\api.csproj": {}
+    "C:\\Users\\SECCA\\Documents\\2025 Systems\\dotnet-8-pro\\api\\api.csproj": {}
   },
   "projects": {
-    "c:\\Users\\SECCA\\Documents\\2025 Systems\\dotnet-8-pro\\api\\api.csproj": {
+    "C:\\Users\\SECCA\\Documents\\2025 Systems\\dotnet-8-pro\\api\\api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Users\\SECCA\\Documents\\2025 Systems\\dotnet-8-pro\\api\\api.csproj",
+        "projectUniqueName": "C:\\Users\\SECCA\\Documents\\2025 Systems\\dotnet-8-pro\\api\\api.csproj",
         "projectName": "api",
-        "projectPath": "c:\\Users\\SECCA\\Documents\\2025 Systems\\dotnet-8-pro\\api\\api.csproj",
+        "projectPath": "C:\\Users\\SECCA\\Documents\\2025 Systems\\dotnet-8-pro\\api\\api.csproj",
         "packagesPath": "C:\\Users\\SECCA\\.nuget\\packages\\",
-        "outputPath": "c:\\Users\\SECCA\\Documents\\2025 Systems\\dotnet-8-pro\\api\\obj\\",
+        "outputPath": "C:\\Users\\SECCA\\Documents\\2025 Systems\\dotnet-8-pro\\api\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\SECCA\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -21,6 +21,8 @@
           "net8.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -49,6 +51,8 @@
               "version": "[8.0.5, )"
             },
             "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
               "target": "Package",
               "version": "[8.0.0, )"
             },

@@ -46,3 +46,43 @@
     1. Microsoft.EntityFramworkCore.SqlServer (Version 8.0 / It depends on you. The version should match with your configuration in the asp.csproj)
     2. Microsoft.EntityFrameworkCore.Tools (Version 8.0 / It depends on you. The version should match with your configuration in the asp.csproj)
     3. Microsoft.EntityFrameworkCore.Design (Version 8.0 / It depends on you. The version should match with your configuration in the asp.csproj)
+
+================= DATABASE CONNECTION STRING TEMPLATE (FOR Microsoft SQL Server) =====================
+
+"Data Source={PCNAME}\\SQLEXPRESS;Initial Catalog={DATABASENAME};Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False"
+
+================== MIGRATION (to make the code generate a database for you) ================ 
+  1. Initial Database Creation (First Time Setup)
+    # Creates your FIRST migration snapshot (named 'init')
+        > dotnet ef migrations add init
+
+    # Applies the migration to create the database and all tables
+        > dotnet ef database update
+
+    ? What this does:
+                        - Generates a /Migrations folder with init.cs
+                        - Creates the database with tables for all your current models
+                        - Adds an __EFMigrationsHistory table to track migrations
+
+  2. When Adding a New Model/Table (Later Changes)
+    # Create a NEW migration with a descriptive name
+    >   dotnet ef migrations add AddCommentTable
+
+    # Apply the changes to the database
+    >   dotnet ef database update
+
+    ? Key Points:
+        ! Never reuse init for new changes (creates duplicate tables)
+        - Use meaningful names like:
+                                    AddProductTable, AddEmailColumnToUser, RemovePhoneNumberColumn
+           - Will create tables:    [Products] ....
+
+
+    W A R N I N G: 
+        - One migration per change (add table, modify column, etc.)
+        - Never manually edit old migrations
+        - Check pending migrations with: 
+            > dotnet ef migrations list
+
+  3. Undo a Migration:
+        - dotnet ef database update LastGoodMigrationName
