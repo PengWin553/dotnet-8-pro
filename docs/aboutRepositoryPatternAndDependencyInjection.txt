@@ -1,0 +1,25 @@
+============= Summary ==============
+
+1. Create the Interface:
+	IStockRepository.cs
+2. Create the Repository:
+	StockRepository.cs
+3. Modify the StockController for dependency injection
+4. Modify the Program.cs to add additional services:
+	IStockRepository and StockRepository
+
+=============== DETAILED EXPLANATION ==========
+
+1. Create the Interface (IStockRepository.cs)
+    - Defines the contract with GetAllAsync() method
+    - Provides abstraction layer for data access operations
+
+2. Create the Repository (StockRepository.cs)
+    - Implements IStockRepository interface
+    - Contains the actual data access logic using Entity Framework
+    - Uses dependency injection to receive ApplicationDBContext
+
+3. Modify the StockController
+    - Added IStockRepository _stockRepo field
+    - Updated constructor to inject both ApplicationDBContext and IStockRepository
+    - Modified GetAll() method to use repository instead of direct context access

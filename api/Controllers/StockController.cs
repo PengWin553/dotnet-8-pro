@@ -7,6 +7,7 @@ using api.Data;
 using api.Models;
 using api.Mappers; 
 using api.Dto.Stock;
+using api.Interfaces; // add this manually
 using Microsoft.EntityFrameworkCore; // ToListAsync(), FirstOrDefaultAsync(), and FindAsync() are extension methods provided by Entity Framework Core
 
 namespace api.Controllers
@@ -14,18 +15,22 @@ namespace api.Controllers
     [Route("api/stock")]
     [ApiController]
     public class StockController : ControllerBase
-    {
-        private readonly ApplicationDBContext _context;
+    {   
         // shortcut for constructor: 'ctor' + tab
-        public StockController(ApplicationDBContext context)
+        private readonly ApplicationDBContext _context; // database (context) related stuff will be all replaced in the future with the repository pattern instead
+        private readonly IStockRepository _stockRepo;
+
+        // THIS IS DEPENDENCY INJECTION - constructor injection: ApplicationDBContext and IStockRepository are being injected
+        public StockController(ApplicationDBContext context, IStockRepository stockRepo)
         {
+            _stockRepo = stockRepo;
             _context = context;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var stocks = await _context.Stocks.ToListAsync(); // connected to the Stocks in your ApplicationDBContext
+            var stocks = await _stockRepo.GetAllAsync();
             var stockDto = stocks.Select(s => s.ToStockDto()); // return many (like js map)
 
             return Ok(stockDto);

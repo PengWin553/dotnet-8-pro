@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;  // reference to Entity Framework
 using api.Data; // reference to ApplicationDBContext
+using api.Interfaces; // reference to the Interfaces
+using api.Repository; // reference to the Repositories
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +15,9 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplicationDBContext> (options => {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+
+// Registers the dependency injection mapping
+builder.Services.AddScoped<IStockRepository, StockRepository>();
 
 var app = builder.Build();
 
