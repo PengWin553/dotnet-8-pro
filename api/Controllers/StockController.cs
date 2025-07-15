@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using api.Data;
+using api.Models;
+using api.Mappers; 
 
 namespace api.Controllers
 {
@@ -21,7 +23,9 @@ namespace api.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            var stocks = _context.Stocks.ToList(); // connected to the Stocks in your ApplicationDBContext
+            var stocks = _context.Stocks.ToList() // connected to the Stocks in your ApplicationDBContext
+             .Select(s => s.ToStockDto()); // return many (like js map)
+
             return Ok(stocks);
         }
 
@@ -35,8 +39,7 @@ namespace api.Controllers
                 return NotFound();
             }
 
-            return Ok(stock);
+            return Ok(stock.ToStockDto()); // return one
         }
-        
     }
 }

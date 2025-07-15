@@ -1,0 +1,163 @@
+** SUMMARY **************************************************************88
+1. StockDto.cs (Data Transfer Object)
+    - Defines a subset of model properties to expose via the API
+    - Acts as a contract between client and server
+    - Prevents over-fetching/under-fetching data
+
+2. StockMappers.cs (Conversion Layer)
+    - Translates between Entity ↔ DTO
+    - Handles data shaping (e.g., flattening nested objects)
+
+3. StockController.cs (Orchestration Layer)
+    - Accepts HTTP Requests (GET/POST/etc.)
+    - Delegates Business Logic (to services/repositories)
+    - Returns Properly Formatted DTOs
+
+CLEAN FLOW EXAMPLE:
+
+    [HttpGet("{id}")]
+    public IActionResult GetStock(int id)
+    {
+        // 1. Fetch raw entity from database
+        var stock = _repo.GetById(id); 
+        
+        // 2. Convert to DTO
+        var dto = stock.ToStockDto();  
+        
+        // 3. Return HTTP response
+        return Ok(dto);  
+    }
+
+=========== MORE DETAILED =========
+
+1. StockDto.cs (Data Transfer Object)
+
+    // Defines the data structure for transferring stock information between layers
+    // Limits exposed fields to prevent over-posting and circular references
+    namespace api.Dtos
+    {
+        public class StockDto
+        {
+            public int Id { get; set; }
+            public string Symbol { get; set; } = string.Empty;
+            public string CompanyName { get; set; } = string.Empty;
+            public decimal Purchase { get; set; }
+            public decimal LastDiv { get; set; }
+            public string Industry { get; set; } = string.Empty;
+            public long MarketCap { get; set; }
+            
+            // Comments are intentionally excluded from DTO to:
+            // 1. Prevent circular references
+            // 2. Control data exposure
+            // 3. Optimize payload size
+        }
+    }
+
+2. StockMappers.cs (Conversion Layer)
+
+    // Responsible for converting between Entity <-> DTO
+    // Maintains separation of concerns between database and API layers
+    using api.Dtos;
+    using api.Models;
+
+    namespace api.Mappers
+    {
+        public static class StockMappers
+        {
+            // Convert Stock Entity to StockDto (for API responses)
+            public static StockDto ToStockDto(this Stock stockModel)
+            {
+                return new StockDto
+                {
+                    Id = stockModel.Id,
+                    Symbol = stockModel.Symbol,
+                    CompanyName = stockModel.CompanyName,
+                    Purchase = stockModel.Purchase,
+                    LastDiv = stockModel.LastDiv,
+                    Industry = stockModel.Industry,
+                    MarketCap = stockModel.MarketCap
+                };
+            }
+
+            // Convert StockDto to Stock Entity (for database operations)
+            public static Stock ToStockFromCreateDto(this CreateStockRequestDto stockDto)
+            {
+                return new Stock
+                {
+                    Symbol = stockDto.Symbol,
+                    CompanyName = stockDto.CompanyName,
+                    Purchase = stockDto.Purchase,
+                    LastDiv = stockDto.LastDiv,
+                    Industry = stockDto.Industry,
+                    MarketCap = stockDto.MarketCap
+                };
+            }
+        }
+    }
+
+3. StockController.cs (API Endpoint Handler)
+
+    // Handles HTTP requests/responses for Stock operations
+    // Implements clean architecture principles:
+    // - Uses DTOs for data contracts
+    // - Leverages mappers for conversions
+    // - Keeps business logic out of controllers
+    using api.Dtos;
+    using api.Interfaces;
+    using api.Mappers;
+    using Microsoft.AspNetCore.Mvc;
+
+    namespace api.Controllers
+    {
+        [Route("api/[controller]")]
+        [ApiController]
+        public class StockController : ControllerBase
+        {
+            private readonly IStockRepository _stockRepo;
+            
+            // Dependency injection of repository pattern
+            public StockController(IStockRepository stockRepo)
+            {
+                _stockRepo = stockRepo;
+            }
+
+            [HttpGet]
+            public async Task<IActionResult> GetAll()
+            {
+                // 1. Fetch data from repository
+                var stocks = await _stockRepo.GetAllAsync();
+                
+                // 2. Convert to DTOs
+                var stockDtos = stocks.Select(s => s.ToStockDto());
+                
+                // 3. Return HTTP response
+                return Ok(stockDtos);
+            }
+
+            [HttpGet("{id:int}")]
+            public async Task<IActionResult> GetById([FromRoute] int id)
+            {
+                var stock = await _stockRepo.GetByIdAsync(id);
+                
+                return stock == null ? 
+                    NotFound() : 
+                    Ok(stock.ToStockDto());
+            }
+
+            [HttpPost]
+            public async Task<IActionResult> Create([FromBody] CreateStockRequestDto stockDto)
+            {
+                // 1. Convert DTO to Entity
+                var stockModel = stockDto.ToStockFromCreateDto();
+                
+                // 2. Persist via repository
+                await _stockRepo.CreateAsync(stockModel);
+                
+                // 3. Return created resource
+                return CreatedAtAction(
+                    nameof(GetById), 
+                    new { id = stockModel.Id }, 
+                    stockModel.ToStockDto());
+            }
+        }
+}
