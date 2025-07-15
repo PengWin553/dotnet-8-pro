@@ -1,0 +1,16 @@
+1. Add this to the StockMapper.cs:
+
+    public static Stock ToStockFromUpdateDto(this UpdateStockRequestDto stockDto, Stock existingStock)
+    {
+        existingStock.Symbol = stockDto.Symbol;
+        existingStock.CompanyName = stockDto.CompanyName;
+        existingStock.Purchase = stockDto.Purchase;
+        existingStock.LastDiv = stockDto.LastDiv;
+        existingStock.Industry = stockDto.Industry;
+        existingStock.MarketCap = stockDto.MarketCap;
+        return existingStock;
+    }
+
+2. In the StockController.cs, it should look like:
+
+    var updatedStock = updateDto.ToStockFromUpdateDto(stockModel);
