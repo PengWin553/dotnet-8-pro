@@ -82,7 +82,7 @@ namespace api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Stocks");
+                    b.ToTable("Stock");
                 });
 
             modelBuilder.Entity("api.Models.Comment", b =>
