@@ -1,0 +1,22 @@
+1. What's the difference in the process of create and update methods in the controller?
+
+    - Create Flow:
+        > User Input → CreateStockRequestDto (validated) → Convert to Model → Repository
+
+            - DTO is validated by ASP.NET Core model binding
+            - DTO is converted to Model via mapper
+            - Model is passed to repository
+
+    - Update Flow:
+        > User Input → UpdateStockRequestDto (validated) → Repository (uses DTO properties directly)
+
+            - DTO is validated by ASP.NET Core model binding
+            - DTO is NOT converted to a model
+            - Repository uses DTO properties to update existing entity
+
+        - NOTE: 
+                - If you create an UpdateMapper, you can make the update method follow the same pattern as create, but it's optional - both approaches are valid.
+
+                - Which Approach to Choose?
+                    - Simple projects: Direct property assignment is fine
+                    - Complex projects: Use mappers for consistency and maintainability
