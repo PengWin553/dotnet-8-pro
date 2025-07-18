@@ -18,6 +18,7 @@ builder.Services.AddDbContext<ApplicationDBContext> (options => {
 
 // Registers the dependency injection mapping
 builder.Services.AddScoped<IStockRepository, StockRepository>();
+builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 
 var app = builder.Build();
 
