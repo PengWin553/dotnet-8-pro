@@ -1,0 +1,11 @@
+1. CreateCommentDto Mapper - Converts the incoming DTO to a Comment domain model using commentDto.ToCommentFromCreate(stockId), properly binding the comment to the specified stock
+2. Something to Find if a Stock passed from Route Exists - Validates the stock existence through _stockRepo.StockExists(stockId) before allowing comment creation, preventing comments on non-existent stocks
+3. An Interface and Repository code that Contracts the Controller to the Comment FindStock and CreateAsync - Uses dependency injection with repository interfaces to decouple the controller from direct database operations, providing clean separation between the API layer and data access layer
+4. CommentRepository CreateAsync to interact with the database - Handles the actual database persistence of the new comment model through the repository pattern
+5. Displays the new comment in json format in the response when using Swagger - Returns the newly created comment as a JSON response using commentModel.ToCommentDto(), following REST conventions with CreatedAtAction to provide the proper 201 status code and location header
+
+===================== MORE BREAKDOWN ==================
+await _commentRepo.CreateAsync(commentModel); 
+
+    1. _commentRepo = This is the dependency injection part - it's an interface (like ICommentRepository) that gets injected into the controller, following the repository pattern with interface + repository implementation codes
+    2. CreateAsync(commentModel) = This passes the comment model to the CreateAsync function that's implemented in the actual Comment Repository class

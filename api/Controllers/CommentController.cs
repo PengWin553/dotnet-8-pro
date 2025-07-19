@@ -16,11 +16,13 @@ namespace api.Controllers
     public class CommentController : ControllerBase
     {
         private readonly ICommentRepository _commentRepo;
+        private readonly IStockRepository _stockRepo;
 
         // THIS IS DEPENDENCY INJECTION - constructor injection
-        public CommentController(ICommentRepository commentRepo)
+        public CommentController(ICommentRepository commentRepo, IStockRepository stockRepo)
         {
             _commentRepo = commentRepo;
+            _stockRepo = stockRepo;
         }
 
         [HttpGet]
@@ -42,6 +44,19 @@ namespace api.Controllers
             }
 
             return Ok(comment.ToCommentDto()); // return one
+        }
+
+        [HttpPost("{stockId}")]
+        public async Task<IActionResult> Create([FromRoute] int stockId, CreateCommentDto commentDto) // 1
+        {
+            if(!await _stockRepo.StockExists(stockId))  // 2
+            {
+                return BadRequest("Stock does not exist");
+            }
+
+            var commentModel = commentDto.ToCommentFromCreate(stockId); // 1
+            await _commentRepo.CreateAsync(commentModel);  // 3 and 4
+            return CreatedAtAction(nameof(GetById) , new { id = commentModel}, commentModel.ToCommentDto()); // 5
         }
     }
 }
