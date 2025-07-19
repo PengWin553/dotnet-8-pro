@@ -1,0 +1,4 @@
+A Contract!
+
+In the interface, you define what DTOs and Models will be passed to the repository methods.
+This process is called a contract.
