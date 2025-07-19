@@ -1,0 +1,11 @@
+Three layers of validation in ASP.NET Core:
+
+Route-level validation (URL constraints)
+Model-level validation (Data annotations)
+Controller-level validation (ModelState check)
+
+============ EXAMPLES =============
+
+1. URL Constraint ({id:int}) = Data Validation 
+2. Data Annotations ([Required], [MinLength], [MaxLength]) = Data Validation Declaration 
+3. ModelState.IsValid = Makes the data annotations work (Another Data Validation) 
