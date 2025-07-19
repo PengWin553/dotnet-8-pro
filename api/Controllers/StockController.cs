@@ -58,14 +58,14 @@ namespace api.Controllers
         [Route("{id}")]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateStockRequestDto updateDto)
         {
-            var stockModel = await _stockRepo.UpdateAsync(id, updateDto);
+            var stock = await _stockRepo.UpdateAsync(id, updateDto.ToStockFromUpdate());
 
-            if (stockModel == null)
+            if (stock == null)
             {
                 return NotFound();
             }
 
-            return Ok(stockModel.ToStockDto());
+            return Ok(stock.ToStockDto());
         }
 
         [HttpDelete]

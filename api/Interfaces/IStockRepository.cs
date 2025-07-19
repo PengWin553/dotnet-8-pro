@@ -12,7 +12,7 @@ namespace api.Interfaces
         Task<List<Stock>> GetAllAsync();
         Task<Stock?> GetByIdAsync(int id); //FirstOrDefault can be a null
         Task<Stock> CreateAsync(Stock stockModel);
-        Task<Stock?> UpdateAsync(int id, UpdateStockRequestDto stockDto);
+        Task<Stock?> UpdateAsync(int id, Stock stockModel);
         Task<Stock?> DeleteAsync(int id);
 
         // Stock Finder
