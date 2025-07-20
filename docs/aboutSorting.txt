@@ -1,0 +1,11 @@
+============= SUMMARY =====================
+
+1. In the Helpers, define the sorting properties for your QueryObject class. These properties will capture and store the user's sorting preferences from the request.
+2. In the StockRepository, leverage AsQueryable() to implement dynamic sorting functionality. This implementation demonstrates sorting by symbol (with the flexibility to add additional sortable fields), using OrdinalIgnoreCase to ensure case-insensitive comparison of user input parameters.
+
+===================== MORE INFO ==========
+1. Clean separation of concerns - The QueryObject encapsulates all query parameters (filtering and sorting) in one place
+2. Flexible sorting design - Using SortBy as a string allows for easy extension to sort by different fields
+3. Proper use of AsQueryable() - This enables deferred execution, so the sorting logic is translated to SQL rather than being processed in memory
+4. Case-insensitive comparison - Using StringComparison.OrdinalIgnoreCase makes the API more user-friendly
+5. Conditional sorting direction - The ternary operator cleanly handles ascending vs descending order

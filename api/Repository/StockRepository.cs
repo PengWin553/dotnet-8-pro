@@ -30,14 +30,28 @@ namespace api.Repository
         {
             var stocks = _context.Stocks.Include(c => c.Comments).AsQueryable(); // AsQueryable allows filtering
 
+            // Filter by Company Name
             if (!string.IsNullOrWhiteSpace(query.CompanyName))
             {
                 stocks = stocks.Where(s => s.CompanyName.Contains(query.CompanyName));
             }
 
+            //  Filter by Symbol
             if (!string.IsNullOrWhiteSpace(query.Symbol))
             {
                 stocks = stocks.Where(s => s.Symbol.Contains(query.Symbol));
+            }
+
+            // Sort by (Expandable)
+            if (!string.IsNullOrWhiteSpace(query.SortBy))
+            {
+                // Sort by Symbol
+                if (query.SortBy.Equals("Symbol", StringComparison.OrdinalIgnoreCase))
+                {
+                    stocks = query.IsDescending ? stocks.OrderByDescending(s => s.Symbol) : stocks.OrderBy(s => s.Symbol);
+                }
+
+                // Add another Sort by ... if needed
             }
             
             return await stocks.ToListAsync();
