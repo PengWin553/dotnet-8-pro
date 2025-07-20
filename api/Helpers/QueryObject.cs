@@ -15,5 +15,8 @@ namespace api.Helpers
         public string? SortBy { get; set; } = null;
         public bool IsDescending { get; set; } = false;
 
+        // For Pagination
+        public int PageNumber { get; set; } = 1; // Page index starting from 1 (first page)
+        public int PageSize { get; set; } = 20; // Number of items per page (default 20)
     }
 }

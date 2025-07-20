@@ -1,0 +1,4 @@
+=============== SUMMARY ============
+
+1. In the Helpers, define the pagination properties for your QueryObject class. These properties will capture and store the user's pagination preferences from the request.
+2. In the StockRepository, implement the pagination logic by calculating the number of records to skip and limiting the results returned per page.
