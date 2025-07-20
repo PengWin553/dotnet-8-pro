@@ -4,10 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using api.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace api.Data
 {
-    public class ApplicationDBContext : DbContext
+    public class ApplicationDBContext : IdentityDbContext<AppUser> // Change inheritance from DbContext to IdentityDbContext<AppUser>
     {
         // 'ctor' + tab = creates a constructor
         public ApplicationDBContext(DbContextOptions dbContextOptions)

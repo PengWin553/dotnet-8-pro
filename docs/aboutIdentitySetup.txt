@@ -1,0 +1,79 @@
+================ ASP.NET Core Identity Setup Guide ==============
+
+Overview:
+	- ASP.NET Core Identity provides a comprehensive user management system with built-in authentication and authorization features. The IdentityUser class serves as the base model that can be extended to include custom user properties while automatically handling password management and security features.
+
+Prerequisites:
+	- Install necessary dependencies from NuGet Package (refer to docs/setup.txt   - find "SETUP JWT")
+	- Existing ASP.NET Core project with Entity Framework Core configured
+
+Step 1: Create the Custom User Model (AppUser.cs)
+	- Create a custom user model that extends the default IdentityUser class
+
+	* Key Points:
+		- Inherits all default Identity properties (Username, Email, Password handling, etc.)
+		- Password and password confirmation are managed automatically by Identity
+		- Extend with custom fields specific to your application needs
+
+Step 2: Configure ApplicationDbContext for Identity
+	- Update your ApplicationDbContext.cs to work with Identity
+
+	* Important:
+		- Change inheritance from DbContext to IdentityDbContext<AppUser>
+
+Step 3: Register Identity Services in Program.cs
+	- Configure Identity services and authentication in Program.cs
+
+	* Configuration Breakdown:
+		1. Identity Service Configuration	
+            - AddIdentity<AppUser, IdentityRole>: Registers Identity services using your custom AppUser model and default IdentityRole
+            - Password Requirements: Enforces strong password policies with digits, mixed case, special characters, and minimum length
+            - AddEntityFrameworkStores<ApplicationDBContext>: Connects Identity to your Entity Framework context for data persistence
+
+    * Authentication Scheme Configuration
+            - Default Schemes Setup: Sets JWT Bearer as the primary authentication mechanism for all authentication operations
+            - DefaultAuthenticateScheme: Determines how incoming requests are authenticated
+            - DefaultChallengeScheme: Handles unauthorized access attempts (returns 401)
+            - DefaultForbidScheme: Handles forbidden access attempts (returns 403)
+
+    * JWT Bearer Configuration
+            - Token Validation: Ensures incoming JWT tokens are valid and trustworthy
+            - Issuer Validation: Verifies the token was issued by your application
+            - Audience Validation: Confirms the token is intended for your application
+            - Signing Key Validation: Verifies token integrity using the secret signing key
+
+    * Middleware Order
+            - UseAuthentication(): Must come first - identifies who the user is
+            - UseAuthorization(): Must come second - determines what the user can access
+
+Step 4: Configure JWT in appsettings.json
+    - Add JWT configuration to your appsettings.json
+
+    * JWT Configuration Properties:
+        1. SigningKey: Secret key used to sign and verify JWT tokens (must match the key in Program.cs)
+        2. Issuer: Identifies who issued the token (your application name)
+        3. Audience: Identifies who the token is intended for (your application users)
+        4. (Optional) DurationInMinutes: How long the token remains valid before expiring     // looks like this: "DurationInMinutes": 60
+
+    !!! Security Note: The SigningKey should be at least 32 characters long and kept secure. In production, store this in environment variables or Azure Key Vault.
+
+Step 5: Create and Apply Identity Migration
+
+    !!! Important: Stop your development server before running migration commands:
+        1. Create Migration
+            > dotnet ef migrations add Identity
+        
+        2. Apply Migration to Database
+            > dotnet ef database update
+    
+    * What This Creates
+        - The migration will generate the following Identity tables:
+                - AspNetUsers - User accounts
+                - AspNetRoles - User roles
+                - AspNetUserRoles - User-role relationships
+                - AspNetUserClaims - User claims
+                - AspNetUserLogins - External login providers
+                - AspNetUserTokens - User tokens
+                - AspNetRoleClaims - Role-based claim
+
+    

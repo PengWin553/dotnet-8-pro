@@ -86,3 +86,13 @@
 
   3. Undo a Migration:
         - dotnet ef database update LastGoodMigrationName
+
+
+====================== SETUP JWT ================
+
+Install these using NuGet:
+
+    - Microsoft.Extensions.Identity.Core
+    - Microsoft.AspNetCore.Identity.EntityFrameworkCore
+    - Microsoft.AspNetCore.Authentication.JwtBearer
+
