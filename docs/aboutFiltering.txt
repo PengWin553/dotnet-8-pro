@@ -1,0 +1,17 @@
+================== FLOW ======================
+
+// Controller
+1. Get the query value from the user and store it in the QueryObject. Send this query to the StockRepository for processing.
+    - The GetAll method in StockController.cs receives query parameters from the user via [FromQuery] QueryObject query, and passes the QueryObject to _stockRepo.GetAllAsync(query) for processing.
+
+// Helper
+2. Instantiate or define the query object inside the api/Helpers/QueryObject.cs. Its values are props.
+    - The QueryObject is defined in the Helpers folder with nullable string properties (Symbol and CompanyName) that serve as the filtering criteria props.
+
+// Interface
+3. The IStockRepository interface should have the QueryObject query parameters (passed from the Helpers).
+    - The interface includes Task<List<Stock>> GetAllAsync(QueryObject query) method signature, accepting the QueryObject query parameters from the Helpers namespace.
+
+// Repository
+4. In the GetAllAsync(QueryObject query) in the StockRepository, use the AsQueryable() to use the filtering function.
+    - The repository implementation uses AsQueryable() to enable the filtering function, then conditionally applies Where clauses based on the QueryObject properties using Contains() for partial matching, before executing with ToListAsync().

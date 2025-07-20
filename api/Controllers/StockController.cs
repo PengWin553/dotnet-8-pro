@@ -8,6 +8,7 @@ using api.Models;
 using api.Mappers;
 using api.Dto.Stock;
 using api.Interfaces; // add this manually
+using api.Helpers; // add this manually
 
 namespace api.Controllers
 {
@@ -25,12 +26,12 @@ namespace api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] QueryObject query) // receives query data from user
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var stocks = await _stockRepo.GetAllAsync();
+            var stocks = await _stockRepo.GetAllAsync(query); // passes query data to the StockRepository
             var stockDto = stocks.Select(s => s.ToStockDto()); // return many (like js map)
 
             return Ok(stockDto);
