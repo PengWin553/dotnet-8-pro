@@ -8,6 +8,7 @@ using api.Models;
 using api.Service;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace api.Controllers
 {
@@ -17,11 +18,45 @@ namespace api.Controllers
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly ITokenService _tokenService;
+        private readonly SignInManager<AppUser> _signInManager; // Handles user sign-in and authenticati
 
-        public AccountController(UserManager<AppUser> userManager, ITokenService tokenService)
+        public AccountController(UserManager<AppUser> userManager, ITokenService tokenService, SignInManager<AppUser> signInManager)
         {
             _userManager = userManager;
             _tokenService = tokenService;
+            _signInManager = signInManager;
+        }
+
+        [HttpPost("login")] 
+        public async Task<IActionResult> Login(LoginDto loginDto)
+        {
+            // Validate the request model (e.g., check for missing username/password)
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            // Fetch the user from the database (case-insensitive search)
+            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.UserName == loginDto.UserName.ToLower());
+
+            // Reject if user doesn't exist
+            if (user == null)
+                return Unauthorized("Invalid username");
+
+            // Verify the password
+            var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
+
+            // Reject if password is invalid
+            if (!result.Succeeded)
+                return Unauthorized("Username not found and/or password incorrect.");
+
+            // Return user details + JWT token on success
+            return Ok(
+                new NewUserDto
+                {
+                    UserName = user.UserName,
+                    Email = user.Email,
+                    Token = _tokenService.CreateToken(user)
+                }
+            );
         }
 
         [HttpPost("register")]

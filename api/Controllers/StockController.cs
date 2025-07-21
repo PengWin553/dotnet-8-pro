@@ -8,7 +8,8 @@ using api.Models;
 using api.Mappers;
 using api.Dto.Stock;
 using api.Interfaces; // add this manually
-using api.Helpers; // add this manually
+using api.Helpers;
+using Microsoft.AspNetCore.Authorization; // add this manually
 
 namespace api.Controllers
 {
@@ -26,6 +27,7 @@ namespace api.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetAll([FromQuery] QueryObject query) // receives query data from user
         {
             if (!ModelState.IsValid)

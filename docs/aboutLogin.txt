@@ -1,0 +1,110 @@
+Step 1: Create the LoginDto (Data Transfer Object)
+    File: LoginDto.cs
+
+    Purpose: Defines the expected request structure for user login, including validation rules.
+
+Step 2: Configure the AccountController
+    File: AccountController.cs
+
+    Step 2.1: Inject SignInManager<AppUser>
+        - Purpose: Enables authentication and sign-in operations for users.
+
+    Step 2.2: Implement the Login API Endpoint
+        - Purpose: Authenticates a user and returns a JWT token if successful.
+
+Step 3: Copy paste the code snippet below to your Program.cs
+        - This code configures Swagger UI (API documentation) to support JWT Bearer Token authentication.
+
+            This enables Swagger to:
+                - Display an "Authorize" button in the UI
+                - Accept JWT tokens in the Authorization: Bearer {token} header
+                - Securely test endpoints that require authentication
+        
+        - THE CODE SNIPPET ( paste it below builder.Services.AddSwaggerGen(); ):
+
+            builder.Services.AddSwaggerGen(option =>
+            {
+                option.SwaggerDoc("v1", new OpenApiInfo { Title = "Demo API", Version = "v1" });
+                option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Description = "Please enter a valid token",
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.Http,
+                    BearerFormat = "JWT",
+                    Scheme = "Bearer"
+                });
+                option.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type=ReferenceType.SecurityScheme,
+                                Id="Bearer"
+                            }
+                        },
+                        new string[]{}
+                    }
+                });
+            });
+        
+Step 4: Apply [Authorize] to Endpoints
+
+    - Actual Implementation Example:
+
+        [HttpGet]
+        [Authorize]  // this line here
+        public async Task<IActionResult> GetAll([FromQuery] QueryObject query) 
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var stocks = await _stockRepo.GetAllAsync(query);
+            var stockDto = stocks.Select(s => s.ToStockDto());
+
+            return Ok(stockDto);
+        }
+
+    - Sample 1: Basic Usage (Controller-Level):
+
+        [Authorize] // Applies to all actions in this controller
+        [ApiController]
+        [Route("api/[controller]")]
+        public class SecureController : ControllerBase
+        {
+            [HttpGet("data")]
+            public IActionResult GetData() => Ok("Protected data");
+        }
+    
+    - Sample 2: Action-Level (Granular Control):
+
+        [Route("api/[controller]")]
+        public class MixedController : ControllerBase
+        {
+            [HttpGet("public")]
+            public IActionResult PublicData() => Ok("No auth needed");
+
+            [Authorize] // Only this endpoint requires auth
+            [HttpGet("private")]
+            public IActionResult PrivateData() => Ok("JWT required");
+        }
+
+    - Sample 3: With Roles/Policies (Advanced):
+
+        [Authorize(Roles = "Admin")] // Requires "Admin" role
+        [HttpGet("admin-only")]
+        public IActionResult AdminData() => Ok("Admins only");
+
+Step 5: Test it out.
+
+    1. Go to Swagger
+    2. Log in using your existing user credentials
+    3. Test the [GET] api/stock
+        - This should return: 	
+                Error: Unauthorized
+    4. Copy the token provided when you logged in
+    5. Press the Authorize button and paste your token
+    5.  Test the [GET] api/stock again
+        - This should return data now.
