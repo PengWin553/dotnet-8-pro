@@ -61,6 +61,3 @@ Step 4: Running EF Core Migrations (SeedRole)
                 - Runs the Up() method of SeedRole to insert the roles.
                 - Updates __EFMigrationsHistory to mark SeedRole as executed.
         
-  
-
-

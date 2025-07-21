@@ -1,0 +1,64 @@
+====================== STEPS ======================
+1. Create the ITokenService Interface [ITokenService.cs]
+	- Purpose: Define the contract for token generation.
+
+2. Implement the TokenService [TokenService.cs]
+	- Implements: ITokenService
+	
+	- Responsibilities:
+		Generate JWT (JSON Web Tokens) for authentication.
+		Include user claims (e.g., username, email) in the token payload.
+		Sign the token with a secret key (from appsettings.json or environment variables).
+		Set token expiration (e.g., 1 day, 7 days).
+
+	- For further details, go to the TokenService.cs file. It has comprehensive comments.
+
+3. Dependency Injection (Program.cs)
+	- Register the TokenService as a scoped service
+
+4. [Optional] Enhance User Registration Flow
+	
+	4.1. NewUserDto (Data Transfer Object)
+		- File: NewUserDto.cs
+		- Purpose: Shape the response after registration (excludes sensitive data like passwords).
+
+    4.2. Update AccountController
+        - Inject ITokenService
+
+    4.3. Modify Register Endpoint
+        - Return NewUserDto:
+            After creating the user, generate a token and return the DTO.
+
+	4.4. THEN TEST THE Register (user) API, you should see a result like this:
+		{
+			"userName": "kanno",
+			"email": "kanno@gmail.com",
+			"token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imthbm5vQGdtYWlsLmNvbSIsImdpdmVuX25hbWUiOiJrYW5ubyIsIm5iZiI6MTc1MzEwNTcwNCwiZXhwIjoxNzUzNzEwNTA0LCJpYXQiOjE3NTMxMDU3MDQsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NTI0NiIsImF1ZCI6Imh0dHA6Ly9sb2NhbGhvc3Q6NTI0NiJ9.fOADXDL8nS2xvBiaaAYbr1XQ21_OcwVScX3yTmM-n1M7G8i8swM3pu9nogFNAErMmSAG7ujH95MEEq074tG88A"
+		}
+
+======================== Missing Security Implementations =================================
+
+1. Secrets Management
+	- Replace _config["JWT:SigningKey"] with environment variables or Azure Key Vault.
+	- Add key rotation (automatically generate new keys periodically).
+
+2. Token Lifespan & Refresh Flow
+	- Shorten token expiry (e.g., 15–30 minutes for access tokens).
+	- Implement refresh tokens (long-lived, stored securely in DB).
+	- Add refresh token rotation (issue new refresh tokens on use).
+
+3. Token Revocation
+	- Uncomment jti claim and implement a token denylist (e.g., Redis).
+	- Add a logout endpoint to revoke tokens immediately.
+
+4. Token Validation Hardening
+	- Validate Issuer and Audience during token validation.
+	- Add IP/device fingerprinting (invalidate tokens if origin changes).
+
+5. HTTPS & Headers
+	- Enforce HTTPS-only token transmission (add Secure flag if using cookies).
+	- Add security headers (HSTS, CSP) in Program.cs.
+
+6. Monitoring
+	- Log failed token generation attempts (watch for brute force attacks).
+	- Set up alerts for suspicious activity (e.g., rapid token requests).
