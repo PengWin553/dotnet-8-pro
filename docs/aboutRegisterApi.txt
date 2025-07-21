@@ -1,0 +1,66 @@
+=================================== SETUP REGISTER API ==========================
+PREREQUISITES: Idenity Setup (go to the commit "Idenity Setup" or docs/aboutIdentitySetup.txt)
+
+==== STEPS ====
+
+1. RegisterDto.cs
+    - This DTO defines the required fields for user registration with proper validation attributes.
+    - [Required] ensures the fields are not null/empty.
+    - [EmailAddress] enforces a valid email format.
+
+2. ApplicationDBContext.cs (Role Setup)
+    - The OnModelCreating method seeds the database with default roles (Admin and User).
+    - IdentityRole is the built-in class for roles in ASP.NET Core Identity.
+    - NormalizedName is used for case-insensitive lookups (e.g., "ADMIN" matches "Admin").
+    - This runs once during migration, ensuring roles exist before user registration.
+
+3. Register API (in AccountController.cs)
+    ModelState Validation: 
+        - Correctly checks if the DTO meets the [Required]/[EmailAddress] rules.
+
+    User Creation:
+        - _userManager.CreateAsync() handles user creation (hashing the password, etc.).
+        - If successful, the user is assigned the "User" role via _userManager.AddToRoleAsync().
+        - Error Handling:
+        - Returns 500 with errors if role assignment or user creation fails.
+        - Catches exceptions (e.g., DB errors) and returns a 500.
+
+Step 4: Running EF Core Migrations (SeedRole)
+    - This step creates and applies a database migration to seed the default roles (Admin and User) into your database using Entity Framework Core (EF Core).
+
+
+    !!! Important Note Before Running Migrations
+        - Ensure your project is not running (e.g., stop the dotnet run process or close the debugger in Visual Studio) before executing EF Core migrations.
+
+
+    Detailed Breakdown (THE STEPS):
+        1. RUN > 
+                    dotnet ef migrations add SeedRole
+        
+            * What it does:
+                - Generates a new migration file (in the Migrations folder) containing SQL commands to:
+                - Create the AspNetRoles table (if it doesn’t exist).
+                - Insert the predefined roles (Admin and User) into the table.
+                - The migration name (SeedRole) describes its purpose (seeding roles).
+
+        *  What happens under the hood:
+                - EF Core compares your DbContext model (with OnModelCreating's role seeding) against the current database state.
+                - It generates SQL commands to update the schema (e.g., inserting roles).
+
+        2. RUN >
+                    dotnet ef database update
+
+            * What it does:
+                - Executes pending migrations (including SeedRole) against the database.
+
+            * Applies the SQL commands to:
+                - Create/modify tables.
+                - Insert the Admin and User roles into AspNetRoles.
+                - What happens under the hood:
+                - EF Core checks the __EFMigrationsHistory table to see which migrations have already been applied.
+                - Runs the Up() method of SeedRole to insert the roles.
+                - Updates __EFMigrationsHistory to mark SeedRole as executed.
+        
+  
+
+
