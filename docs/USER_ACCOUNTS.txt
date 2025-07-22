@@ -1,3 +1,5 @@
+**User Accounts**
+
 DEFAULT USER:
     userName: catwin,
     email: catwin@example.com,
