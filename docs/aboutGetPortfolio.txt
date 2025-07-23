@@ -1,0 +1,72 @@
+Step 1: Create Claims Extensions Helper
+    File: Extensions/ClaimsExtensions.cs
+    Purpose: Provides extension methods to easily extract user information from JWT claims in authenticated requests.
+
+    What this does:
+        Extends the ClaimsPrincipal class with a GetUsername() method
+        Extracts the username from JWT token claims using the standard "givenname" claim type
+        Simplifies user identification in controllers by avoiding repetitive claim parsing code
+
+Step 2: Define Portfolio Repository Interface
+    File: Interfaces/IPortfolioRepository.cs
+    Purpose: Defines the contract for portfolio data access operations, promoting loose coupling and testability.
+
+    What this does:
+        Establishes a contract for portfolio-related database operations
+        Defines GetUserPortfolio method that takes an AppUser and returns their stock holdings
+        Enables dependency injection and makes the code more testable
+        Follows the Repository pattern for data access abstraction
+
+Step 3: Implement Portfolio Repository
+    File: Repository/PortfolioRepository.cs
+    Purpose: Implements the actual data access logic for retrieving user portfolio information from the database.
+
+    What this does:
+        Implements the IPortfolioRepository interface
+        Injects ApplicationDBContext for database access
+        Queries the Portfolios table filtered by the user's ID
+        Performs a projection to map portfolio data to Stock objects
+        Uses Entity Framework's Include functionality implicitly through navigation properties
+        Returns the complete stock information for all stocks in the user's portfolio
+
+    Database Query Logic:
+        Filters portfolios by AppUserId to get only the current user's holdings
+        Uses LINQ projection to create Stock objects with all relevant properties
+        Leverages EF Core's navigation properties to access related Stock data
+
+Step 4: Register Repository in Dependency Injection
+    File: Program.cs (add this line)
+    Purpose: Registers the portfolio repository with the dependency injection container.
+
+    What this does:
+        Registers PortfolioRepository as the implementation of IPortfolioRepository
+        Uses AddScoped lifetime, meaning one instance per HTTP request
+        Enables dependency injection in controllers and other services
+
+Step 5: Create Portfolio Controller
+    File: Controllers/PortfolioController.cs
+    Purpose: Provides HTTP endpoints for portfolio-related operations with proper authentication and authorization.
+
+    What this does:
+        Creates a REST API controller with base route api/portfolio
+        Injects required dependencies: UserManager, IStockRepository, and IPortfolioRepository
+        Implements GetUserPortfolio endpoint that:
+            Requires authentication via [Authorize] attribute
+            Extracts username from JWT claims using the custom extension method
+            Looks up the full user object using Identity's UserManager
+            Retrieves the user's portfolio through the repository
+            Returns the portfolio data as JSON
+
+    Security Features:
+        [Authorize] ensures only authenticated users can access the endpoint
+        User isolation: each user can only see their own portfolio
+        Claims-based authentication for stateless JWT token validation
+
+    Database Schema Requirements:
+        For this implementation to work, you need the following database structure:
+
+        Tables:
+            AspNetUsers - Identity users table
+            Stocks - Stock information table
+            Portfolios - Junction table linking users to their stock holdings
+

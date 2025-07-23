@@ -1,0 +1,36 @@
+AspNetUsers:
+    Id
+	UserName
+    NormalizedUserName
+    Email
+    NormalizedEmail
+    EmailConfirmed
+    PasswordHash
+    SecurityStamp
+    ConcurrencyStamp
+    PhoneNumber
+    PhoneNumberConfirmed
+    TwoFactorEnabled
+    LockoutEnd
+    LockoutEnabled
+    AccessFailedCount
+
+Comments:
+    Id
+    Title
+    Content
+    CreatedOn
+    StockId
+
+Portfolios:
+    AppUserId
+    StockId
+
+Stocks:
+    Id
+    Symbol
+    CompanyName
+    Purchase
+    LastDiv
+    Industry
+    MarketCap

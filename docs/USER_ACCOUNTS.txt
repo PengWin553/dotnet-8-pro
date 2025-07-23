@@ -1,6 +1,7 @@
 **User Accounts**
 
 DEFAULT USER:
-    userName: catwin,
-    email: catwin@example.com,
-    password: c@tWinB0dy03141998
+    userName: cat,
+    email: catwin@gmail.com,
+    password: C4tP4ssw0rd123_456
+
