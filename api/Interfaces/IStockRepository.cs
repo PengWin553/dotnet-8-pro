@@ -16,6 +16,9 @@ namespace api.Interfaces
         Task<Stock?> UpdateAsync(int id, Stock stockModel);
         Task<Stock?> DeleteAsync(int id);
 
+        // Get stock by symbol
+        Task<Stock?> GetBySymbolAsync(string symbol);
+
         // Stock Finder
         Task<bool> StockExists(int id);
     }

@@ -110,5 +110,10 @@ namespace api.Repository
             await _context.SaveChangesAsync();
             return stockModel;
         }
+
+        public async Task<Stock?> GetBySymbolAsync(string symbol)
+        {
+            return await _context.Stocks.FirstOrDefaultAsync(s => s.Symbol == symbol);
+        }
     }
 }
